@@ -1,3 +1,4 @@
+
 #include <avr/io.h>
 #include <util/delay.h>
 #include "gpio.h"
@@ -6,29 +7,28 @@
 #include "Keypad.h"
 
 
-
 /* Calculator Buttons
-7   8   9   /
+1   2   3   +
 4   5   6   -
-1   2   3   *
-C   0   =   +
+7   8   9   C
+*   0   =   /
 */
-#define CALC_BUTTON_0       KEYPAD_B13
-#define CALC_BUTTON_1       KEYPAD_B08
-#define CALC_BUTTON_2       KEYPAD_B09
-#define CALC_BUTTON_3       KEYPAD_B10
-#define CALC_BUTTON_4       KEYPAD_B04
+#define CALC_BUTTON_0       KEYPAD_B07
+#define CALC_BUTTON_1       KEYPAD_B00
+#define CALC_BUTTON_2       KEYPAD_B04
+#define CALC_BUTTON_3       KEYPAD_B08
+#define CALC_BUTTON_4       KEYPAD_B01
 #define CALC_BUTTON_5       KEYPAD_B05
-#define CALC_BUTTON_6       KEYPAD_B06
-#define CALC_BUTTON_7       KEYPAD_B00
-#define CALC_BUTTON_8       KEYPAD_B01
-#define CALC_BUTTON_9       KEYPAD_B02
-#define CALC_BUTTON_PLUS    KEYPAD_B15
-#define CALC_BUTTON_MINUS   KEYPAD_B11
-#define CALC_BUTTON_MUL     KEYPAD_B07
-#define CALC_BUTTON_DIV     KEYPAD_B03
-#define CALC_BUTTON_EQUAL   KEYPAD_B14
-#define CALC_BUTTON_CLR     KEYPAD_B12
+#define CALC_BUTTON_6       KEYPAD_B09
+#define CALC_BUTTON_7       KEYPAD_B02
+#define CALC_BUTTON_8       KEYPAD_B06
+#define CALC_BUTTON_9       KEYPAD_B10
+#define CALC_BUTTON_PLUS    KEYPAD_B12
+#define CALC_BUTTON_MINUS   KEYPAD_B13
+#define CALC_BUTTON_MUL     KEYPAD_B03
+#define CALC_BUTTON_DIV     KEYPAD_B15
+#define CALC_BUTTON_EQUAL   KEYPAD_B11
+#define CALC_BUTTON_CLR     KEYPAD_B14
 
 
 static uint8 Calculator_GetActualNumber(uint8 button);
@@ -81,60 +81,50 @@ int main(void)
 
 					button = Keypad_GetPressedButton();
 
-					           while (button == KEYPAD_INVALID)
-								{
-					        	   button = Keypad_GetPressedButton();
-								}
+					       while (button == KEYPAD_INVALID)
+						    {
+					           button = Keypad_GetPressedButton();
+							}
 
-									Actual_button = Calculator_GetActualNumber(button);
+							Actual_button = Calculator_GetActualNumber(button);
+							LCD_clearScreen();
 
-									LCD_clearScreen();
+					        switch (Actual_button)
+								 {
+										 case 21:
+										   {
+										    	range= 200;
+										    	button2 = KEYPAD_INVALID;
 
-					                     switch (Actual_button)
-										    {
-										    case 21:
-										    	{
-										    		range= 200;
-										    		button2 = KEYPAD_INVALID;
+										        LCD_displayStringRowColumn(0, 4, "VOLTAGE:");
+										        LCD_displayStringRowColumn(1, 14, "mV");
 
+											     while (button2 == KEYPAD_INVALID){
+											    	    LCD_displayStringRowColumn(1, 1, "    ");
+													     OP_ADC = ADC_Read(2);
+														 VOLT = (OP_ADC/1023) * range*0.98;
+														 LCD_displayFloat(VOLT,3);
+														  _delay_ms(1000);
+														  button2 = Keypad_GetPressedButton();
+											    	}
+
+										    }
+										        break;
+										   case 22:
+										     {
+										    	  range= 2;
+										    	  button2 = KEYPAD_INVALID;
 
 										    	    LCD_displayStringRowColumn(0, 4, "VOLTAGE:");
-
-										    	     LCD_displayStringRowColumn(1, 14, "mV");
-
-
-											    	    while (button2 == KEYPAD_INVALID){
-											    	    	 LCD_displayStringRowColumn(1, 1, "    ");
-
-													    	    OP_ADC = ADC_Read(2);
-															    VOLT = (OP_ADC/1023) * range*0.98;
-															    LCD_displayFloat(VOLT,3);
-
-															    _delay_ms(1000);
-															    button2 = Keypad_GetPressedButton();
-											    	    }
-
-										    	}
-
-										        break;
-										    case 22:
-										    	{
-										    		range= 2;
-										    		button2 = KEYPAD_INVALID;
-
-										    	     LCD_displayStringRowColumn(0, 4, "VOLTAGE:");
-										    	     LCD_displayStringRowColumn(1, 14, "V");
-
+										    	    LCD_displayStringRowColumn(1, 14, "V");
 
 										    	    while (button2 == KEYPAD_INVALID){
 										    	    	 LCD_displayStringRowColumn(1, 1, "    ");
-
-												    	    OP_ADC = ADC_Read(2);
-														    VOLT = (OP_ADC/1023) * range*0.98;
-														    LCD_displayFloat(VOLT,3);
-
-														    _delay_ms(1000);
-														    button2 = Keypad_GetPressedButton();
+												    	  OP_ADC = ADC_Read(2);
+														  VOLT = (OP_ADC/1023) * range*0.98;
+														  LCD_displayFloat(VOLT,3);
+														  _delay_ms(1000);
+														  button2 = Keypad_GetPressedButton();
 										    	    }
 
 										    	}
@@ -150,13 +140,11 @@ int main(void)
 
 										    	    while (button2 == KEYPAD_INVALID){
 										    	    	 LCD_displayStringRowColumn(1, 1, "    ");
-
-												    	    OP_ADC = ADC_Read(2);
-														    VOLT = (OP_ADC/1023) * range*0.98;
-														    LCD_displayFloat(VOLT,3);
-
-														    _delay_ms(1000);
-														    button2 = Keypad_GetPressedButton();
+												    	 OP_ADC = ADC_Read(2);
+														 VOLT = (OP_ADC/1023) * range*0.98;
+														 LCD_displayFloat(VOLT,3);
+														  _delay_ms(1000);
+														  button2 = Keypad_GetPressedButton();
 										    	    }
 
 							                	}
@@ -167,183 +155,182 @@ int main(void)
 										   			button2 = KEYPAD_INVALID;
 
 													LCD_displayStringRowColumn(0, 4, "VOLTAGE:");
-										    	     LCD_displayStringRowColumn(1, 14, "V");
-
+										    	    LCD_displayStringRowColumn(1, 14, "V");
 
 										    	    while (button2 == KEYPAD_INVALID){
 										    	    	 LCD_displayStringRowColumn(1, 1, "    ");
-
-												    	    OP_ADC = ADC_Read(2);
-														    VOLT = (OP_ADC/1023) * range*0.98;
-														    LCD_displayFloat(VOLT,3);
-														    _delay_ms(1000);
-														    button2 = Keypad_GetPressedButton();
-										    	    }
+												    	 OP_ADC = ADC_Read(2);
+														 VOLT = (OP_ADC/1023) * range*0.98;
+														 LCD_displayFloat(VOLT,3);
+														  _delay_ms(1000);
+														  button2 = Keypad_GetPressedButton();
+										    	     }
 										   		  }
 										          break;
 
 										    default:
 										 	   break;
-										    }
+									}
 			}
 			else if (Actual_button == 'C')
-
 		    {
-					                 				LCD_clearScreen();
-					                 				_delay_ms(500);
-					                 				LCD_displayStringRowColumn(0,5,"CHOOSE");
-					                 				LCD_displayStringRowColumn(1,0," VOLT/ CURR /RES");
-
-
+					LCD_clearScreen();
+					_delay_ms(500);
+					LCD_displayStringRowColumn(0,5,"CHOOSE");
+					LCD_displayStringRowColumn(1,0," VOLT/ CURR /RES");
 		    }
 			else if (Actual_button == 14)
-							{
-								LCD_displayStringRowColumn(0,1,"CHOOSE C RANGE");
-								LCD_displayStringRowColumn(1,1,"2m/20m/200m/1 A");
+			{
+                   	LCD_displayStringRowColumn(0,1,"CHOOSE C RANGE");
+			    	LCD_displayStringRowColumn(1,1,"2m/20m/200m/1 A");
 
-										button = Keypad_GetPressedButton();
+					button = Keypad_GetPressedButton();
 
-					                    while (button == KEYPAD_INVALID)
-											{
-											  button = Keypad_GetPressedButton();
-											}
-												Actual_button = Calculator_GetActualNumber(button);
+					          while (button == KEYPAD_INVALID)
+									{
+									  button = Keypad_GetPressedButton();
+									}
 
-												LCD_clearScreen();
+										Actual_button = Calculator_GetActualNumber(button);
+										LCD_clearScreen();
 
-													 switch (Actual_button)
-													    {
-									    				   case 24:
-														 	{   range= 1;
-														 	button2 = KEYPAD_INVALID;
+						                switch (Actual_button)
+											 {
+									    		  case 24:
+													  {
+														 range= 1;
+														 button2 = KEYPAD_INVALID;
+							     						 LCD_displayStringRowColumn(0, 4, "CURRENT:");
+						    						     LCD_displayStringRowColumn(1, 14, "A");
 
-							     							    LCD_displayStringRowColumn(0, 4, "CURRENT:");
-						    						    	    LCD_displayStringRowColumn(1, 14, "A");
-
-														    	  while (button2 == KEYPAD_INVALID){
-		    										    	    	 LCD_displayStringRowColumn(1, 1, "    ");
-
-															    	    OP_ADC = ADC_Read(1);
-															    	    CURR = (OP_ADC/1023) * range;
-															    	    LCD_displayFloat(CURR,3);
-						     									    _delay_ms(1000);
-														    	     button2 = Keypad_GetPressedButton();
-														    	  }
-														    	}
-
+														  while (button2 == KEYPAD_INVALID){
+		    										    	      LCD_displayStringRowColumn(1, 1, "    ");
+															      OP_ADC = ADC_Read(1);
+															      CURR = (OP_ADC/1023) * range;
+															      LCD_displayFloat(CURR,3);
+						     									   _delay_ms(1000);
+														    	   button2 = Keypad_GetPressedButton();
+														    }
+														}
 														     break;
-												    	    case 25:
-															{   range= 200;
+
+												    case 25:
+														{
+															range= 200;
 															button2 = KEYPAD_INVALID;
+										       				LCD_displayStringRowColumn(0, 4, "CURRENT:");
+										    		        LCD_displayStringRowColumn(1, 14, "mA");
 
-										       				    LCD_displayStringRowColumn(0, 4, "CURRENT:");
-
-										    		    	     LCD_displayStringRowColumn(1, 14, "mA");
-														    	  while (button2 == KEYPAD_INVALID){
+										    		        while (button2 == KEYPAD_INVALID){
 			    									    	    	 LCD_displayStringRowColumn(1, 1, "    ");
 			    									    	    	 OP_ADC = ADC_Read(1);
-												    		    	  CURR = (OP_ADC/1023) * range;
-												    		    	  LCD_displayFloat(CURR,3);
+												    		    	 CURR = (OP_ADC/1023) * range;
+												    		         LCD_displayFloat(CURR,3);
 							     								    _delay_ms(1000);
-															    	     button2 = Keypad_GetPressedButton();
+															         button2 = Keypad_GetPressedButton();
 														    	  }
-															}
+														}
 														        break;
-														    case 26:
-											                 	{	range= 20;
-											                 	button2 = KEYPAD_INVALID;
 
-												                 		LCD_displayStringRowColumn(0, 4, "CURRENT");
-																	   LCD_displayStringRowColumn(1, 14, "mA");
-												  		    	  while (button2 == KEYPAD_INVALID){
-							    						    	    	 LCD_displayStringRowColumn(1, 1, "    ");
+													case 26:
+											             {
+											                range= 20;
+											                button2 = KEYPAD_INVALID;
+												            LCD_displayStringRowColumn(0, 4, "CURRENT");
+														    LCD_displayStringRowColumn(1, 14, "mA");
 
-							    						    	    	 OP_ADC = ADC_Read(1);
-															    	    CURR = (OP_ADC/1023) * range;
-															    	    LCD_displayFloat(CURR,3);
-							     									    _delay_ms(1000);
-															    	     button2 = Keypad_GetPressedButton();
+												  		     while (button2 == KEYPAD_INVALID){
+							    						    	     LCD_displayStringRowColumn(1, 1, "    ");
+							    						    	     OP_ADC = ADC_Read(1);
+															    	 CURR = (OP_ADC/1023) * range;
+															    	  LCD_displayFloat(CURR,3);
+							     									  _delay_ms(1000);
+															    	    button2 = Keypad_GetPressedButton();
 															    	  }
-											                	}
+											               	}
+															    break;
+
+													 case 11:
+														  {
+															  range= 2;
+														   	  button2 = KEYPAD_INVALID;
+				    										  LCD_displayStringRowColumn(0,4,"CURRENT:");
+															  LCD_displayStringRowColumn(1, 14, "mA");
+
+														      while (button2 == KEYPAD_INVALID){
+						  								    	    OP_ADC = ADC_Read(1);
+															        CURR = (OP_ADC/1023) * range;
+															    	 _delay_ms(1000);
+
+							     									  if(CURR <= 1)
+																		{
+																		  LCD_displayStringRowColumn(0,4,"CURRENT:");
+																	      LCD_displayStringRowColumn(1,0,"   ");
+																		  CURR = CURR *1000.0;
+																		  LCD_displayFloat(CURR,3);
+																		  LCD_displayStringRowColumn(1, 14, "uA");
+																		 }
+																	else
+																		 {
+																		    LCD_displayStringRowColumn(0,4,"CURRENT:");
+																		 	LCD_displayStringRowColumn(1,0,"  ");
+																		 	LCD_displayFloat(CURR,3);
+																		  	LCD_displayStringRowColumn(1, 14, "mA");
+																		  }
+
+																		   	button2 = Keypad_GetPressedButton();
+																	  }
+															   }
 															        break;
-															 case 11:
-														   		{	range= 2;
-														   		button2 = KEYPAD_INVALID;
-
-				    											   		LCD_displayStringRowColumn(0,4,"CURRENT:");
-															    	    LCD_displayStringRowColumn(1, 14, "mA");
-														    	  while (button2 == KEYPAD_INVALID)
-															    	  {
-
-						  								    	    	OP_ADC = ADC_Read(1);
-															    	    CURR = (OP_ADC/1023) * range;
-															    	    _delay_ms(1000);
-							     									      if(CURR <= 1)
-																			  	{
-																			   	  LCD_displayStringRowColumn(0,4,"CURRENT:");
-																	    		  LCD_displayStringRowColumn(1,0,"   ");
-																		  		  CURR = CURR *1000.0;
-																		   		  LCD_displayFloat(CURR,3);
-																		   	    LCD_displayStringRowColumn(1, 14, "uA");
-																		    	}
-																		    	else
-																		    	{
-																		    		LCD_displayStringRowColumn(0,4,"CURRENT:");
-																		    		LCD_displayStringRowColumn(1,0,"  ");
-																		    		LCD_displayFloat(CURR,3);
-																		    		LCD_displayStringRowColumn(1, 14, "mA");
-																		    	}
-																		    	button2 = Keypad_GetPressedButton();
-																	    	  }
-															   		  }
-															          break;
 
 																  default:
 													     		 	   break;
 													    }
+				}
+
+				else if (Actual_button == 13)
+					{
+
+						range = 2;
+					    LCD_clearScreen();
+						button2 = KEYPAD_INVALID;
+
+				        while (button2 == KEYPAD_INVALID){
+							OP_ADC = ADC_Read(2);
+							VOLT = (OP_ADC/1023) * range*0.98;
+							float diff = vin-VOLT;
+					        float mul = RS*VOLT;
+							RX = mul /diff ;
+				            //r = (100000 * RX)/(100000-RX);
+						    if(RX >= 10000)
+							{
+								LCD_displayStringRowColumn(0,2,"Resistance is");
+								LCD_displayStringRowColumn(1,0,"   ");
+								RX = RX /1000.0;
+								LCD_displayFloat(RX,3);
+								LCD_displayString(" kohm");
+						    }
+							else
+					    	{
+								LCD_displayStringRowColumn(0,2,"Resistance is");
+								LCD_displayStringRowColumn(1,0,"  ");
+								LCD_displayFloat(RX,3);
+								LCD_displayString(" ohm");
 							}
 
-				 else if (Actual_button == 10)
-						{
-
-													 					range = 2;
-													 					LCD_clearScreen();
-													 					button2 = KEYPAD_INVALID;
-
-													 			 while (button2 == KEYPAD_INVALID){
-													 					OP_ADC = ADC_Read(2);
-													 					VOLT = (OP_ADC/1023) * range*0.98;
-													 					float diff = vin-VOLT;
-													 					float mul = RS*VOLT;
-													 					RX = mul /diff ;
-													                     //r = (100000 * RX)/(100000-RX);
-													 					if(RX >= 10000)
-													 					{
-													 						LCD_displayStringRowColumn(0,2,"Resistance is");
-													 						LCD_displayStringRowColumn(1,0,"   ");
-													 						RX = RX /1000.0;
-													 						LCD_displayFloat(RX,3);
-													 	   				    LCD_displayString(" kohm");
-													 					}
-													 					else
-													 					{
-													 						LCD_displayStringRowColumn(0,2,"Resistance is");
-													 						LCD_displayStringRowColumn(1,0,"  ");
-													 						LCD_displayFloat(RX,3);
-													 		   				LCD_displayString(" ohm");
-													 					}
-																	    _delay_ms(1000);
-																	    button2 = Keypad_GetPressedButton();
-													 			 }
+						 _delay_ms(1000);
+						  button2 = Keypad_GetPressedButton();
+			          	 }
 
 
-							}
+		        	}
 
-	 else if (Actual_button == 12){
-			LCD_displayStringRowColumn(0,1,"CHOOSE V RANGE");
-			LCD_displayStringRowColumn(1,1,"2V/20V/200V AC");
+	           else if (Actual_button == 12)
+	           {
+			       LCD_displayStringRowColumn(0,1,"CHOOSE V RANGE");
+			       LCD_displayStringRowColumn(1,1,"2V/20V/200V AC");
 
-			button = Keypad_GetPressedButton();
+			       button = Keypad_GetPressedButton();
 
 			           while (button == KEYPAD_INVALID)
 						{
@@ -351,10 +338,9 @@ int main(void)
 						}
 
 							Actual_button = Calculator_GetActualNumber(button);
-
 							LCD_clearScreen();
 
-			                     switch (Actual_button)
+			                  switch (Actual_button)
 								    {
 								    case 27:
 								    	{
@@ -422,17 +408,14 @@ int main(void)
 												    button2 = Keypad_GetPressedButton();
 								    	    }
 
-
-
 					                	}
 								        break;
-							}
+							       }
 				 }
 
 	}
 
 }
-
 
 
 
@@ -495,7 +478,6 @@ static uint8 Calculator_GetActualNumber(uint8 button)
    }
     return number;
 }
-
 
 
 
