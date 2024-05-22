@@ -1,4 +1,3 @@
-
 #include <avr/io.h>
 #include <util/delay.h>
 #include "gpio.h"
@@ -58,7 +57,7 @@ int main(void)
 	GPIO_writePin(PORTC_ID, PIN0_ID, LOGIC_HIGH);
 
 	LCD_displayStringRowColumn(0,5,"CHOOSE");
-	LCD_displayStringRowColumn(1,0," VOLT/ CURR /RES");
+	LCD_displayStringRowColumn(1,0,"V(0)/ C(#) /R(D)");
 
 	while(1)
 	{
@@ -72,9 +71,23 @@ int main(void)
 			}
 			else if (Actual_button == 20)
 			{
+				LCD_clearScreen();
+				_delay_ms(500);
+				LCD_displayStringRowColumn(0,2," DC PUSH (0) ");
+				LCD_displayStringRowColumn(1,2," AC PUSH (*)");
+				button = Keypad_GetPressedButton();
 
-					LCD_displayStringRowColumn(0,1,"CHOOSE V RANGE");
-					LCD_displayStringRowColumn(1,1,"0.2V/2V/20V/200V");
+				       while (button == KEYPAD_INVALID)
+					    {
+				           button = Keypad_GetPressedButton();
+						}
+						Actual_button = Calculator_GetActualNumber(button);
+						LCD_clearScreen();
+
+				if (Actual_button == 20)
+				{
+					LCD_displayStringRowColumn(0,1,"(1-A) V RANGES ");
+					LCD_displayStringRowColumn(1,0,"0.2V/2V/20V/200V");
 
 					button = Keypad_GetPressedButton();
 
@@ -99,9 +112,9 @@ int main(void)
 											     while (button2 == KEYPAD_INVALID){
 											    	    LCD_displayStringRowColumn(1, 1, "    ");
 													     OP_ADC = ADC_Read(2);
-														 VOLT = (OP_ADC/1023) * range*0.98;
+														 VOLT = (OP_ADC/1023) * range*1.02;
 														 LCD_displayFloat(VOLT,3);
-														  _delay_ms(1000);
+														  _delay_ms(500);
 														  button2 = Keypad_GetPressedButton();
 											    	}
 
@@ -118,9 +131,9 @@ int main(void)
 										    	    while (button2 == KEYPAD_INVALID){
 										    	    	 LCD_displayStringRowColumn(1, 1, "    ");
 												    	  OP_ADC = ADC_Read(2);
-														  VOLT = (OP_ADC/1023) * range*0.98;
+														  VOLT = (OP_ADC/1023) * range*1.7;
 														  LCD_displayFloat(VOLT,3);
-														  _delay_ms(1000);
+														  _delay_ms(500);
 														  button2 = Keypad_GetPressedButton();
 										    	    }
 
@@ -138,9 +151,9 @@ int main(void)
 										    	    while (button2 == KEYPAD_INVALID){
 										    	    	 LCD_displayStringRowColumn(1, 1, "    ");
 												    	 OP_ADC = ADC_Read(2);
-														 VOLT = (OP_ADC/1023) * range*0.98;
+														 VOLT = (OP_ADC/1023) * range*1.195;
 														 LCD_displayFloat(VOLT,3);
-														  _delay_ms(1000);
+														 _delay_ms(500);
 														  button2 = Keypad_GetPressedButton();
 										    	    }
 
@@ -157,9 +170,9 @@ int main(void)
 										    	    while (button2 == KEYPAD_INVALID){
 										    	    	 LCD_displayStringRowColumn(1, 1, "    ");
 												    	 OP_ADC = ADC_Read(2);
-														 VOLT = (OP_ADC/1023) * range*0.98;
+														 VOLT = (OP_ADC/1023) * range*1.02;
 														 LCD_displayFloat(VOLT,3);
-														  _delay_ms(1000);
+														 _delay_ms(500);
 														  button2 = Keypad_GetPressedButton();
 										    	     }
 										   		  }
@@ -168,17 +181,107 @@ int main(void)
 										    default:
 										 	   break;
 									}
+				}
+				else if (Actual_button == 12)
+					           {
+							       LCD_displayStringRowColumn(0,1,"(7-9) V RANGES ");
+							       LCD_displayStringRowColumn(1,1,"2V/20V/200V  AC");
+
+							       button = Keypad_GetPressedButton();
+
+							           while (button == KEYPAD_INVALID)
+										{
+							        	   button = Keypad_GetPressedButton();
+										}
+
+											Actual_button = Calculator_GetActualNumber(button);
+											LCD_clearScreen();
+
+							                  switch (Actual_button)
+												    {
+												    case 29:
+												    	{
+												    		range= 200;
+												    		button2 = KEYPAD_INVALID;
+
+
+												    	    LCD_displayStringRowColumn(0, 4, "VOLTAGE:");
+
+												    	     LCD_displayStringRowColumn(1, 14, "V");
+
+
+													    	    while (button2 == KEYPAD_INVALID){
+													    	    	 LCD_displayStringRowColumn(1, 1, "    ");
+
+															    	    OP_ADC = ADC_Read(2);
+																	    VOLT = (OP_ADC/1023) * range*1.002;
+																	    LCD_displayFloat(VOLT,3);
+
+																	    _delay_ms(500);
+																	    button2 = Keypad_GetPressedButton();
+													    	    }
+
+												    	}
+
+												        break;
+												    case 27:
+												    	{
+												    		range= 2;
+												    		button2 = KEYPAD_INVALID;
+
+												    	     LCD_displayStringRowColumn(0, 4, "VOLTAGE:");
+												    	     LCD_displayStringRowColumn(1, 14, "V");
+
+
+												    	    while (button2 == KEYPAD_INVALID){
+												    	    	 LCD_displayStringRowColumn(1, 1, "    ");
+
+														    	    OP_ADC = ADC_Read(2);
+																    VOLT = (OP_ADC/1023) * range*1.2;
+																    LCD_displayFloat(VOLT,3);
+
+																    _delay_ms(500);
+																    button2 = Keypad_GetPressedButton();
+												    	    }
+
+												    	}
+												        break;
+												    case 28:
+									                 	{
+									                 		range= 20;
+									                 		button2 = KEYPAD_INVALID;
+
+									                 		LCD_displayStringRowColumn(0, 4, "VOLTAGE:");
+												    	     LCD_displayStringRowColumn(1, 14, "V");
+
+												    	    while (button2 == KEYPAD_INVALID){
+												    	    	 LCD_displayStringRowColumn(1, 1, "    ");
+
+														    	    OP_ADC = ADC_Read(2);
+																    VOLT = (OP_ADC/1023) * range*1.02;
+																    LCD_displayFloat(VOLT,3);
+
+																    _delay_ms(500);
+																    button2 = Keypad_GetPressedButton();
+												    	    }
+
+									                	}
+												        break;
+											       }
+								 }
+				else{}
 			}
 			else if (Actual_button == 'C')
 		    {
 					LCD_clearScreen();
 					_delay_ms(500);
 					LCD_displayStringRowColumn(0,5,"CHOOSE");
-					LCD_displayStringRowColumn(1,0," VOLT/ CURR /RES");
+					LCD_displayStringRowColumn(1,0,"V(0)/ C(#) /R(D)");
 		    }
 			else if (Actual_button == 14)
 			{
-                   	LCD_displayStringRowColumn(0,1,"CHOOSE C RANGE");
+				LCD_clearScreen();
+                   	LCD_displayStringRowColumn(0,1,"(4-B) C RANGES ");
 			    	LCD_displayStringRowColumn(1,1,"2m/20m/200m/1 A");
 
 					button = Keypad_GetPressedButton();
@@ -193,7 +296,7 @@ int main(void)
 
 						                switch (Actual_button)
 											 {
-									    		  case 24:
+									    		  case 11:
 													  {
 														 range= 1;
 														 button2 = KEYPAD_INVALID;
@@ -205,13 +308,13 @@ int main(void)
 															      OP_ADC = ADC_Read(1);
 															      CURR = (OP_ADC/1023) * range;
 															      LCD_displayFloat(CURR,3);
-						     									   _delay_ms(1000);
+															      _delay_ms(500);
 														    	   button2 = Keypad_GetPressedButton();
 														    }
 														}
 														     break;
 
-												    case 25:
+												    case 26:
 														{
 															range= 200;
 															button2 = KEYPAD_INVALID;
@@ -221,15 +324,15 @@ int main(void)
 										    		        while (button2 == KEYPAD_INVALID){
 			    									    	    	 LCD_displayStringRowColumn(1, 1, "    ");
 			    									    	    	 OP_ADC = ADC_Read(1);
-												    		    	 CURR = (OP_ADC/1023) * range;
+												    		    	 CURR = (OP_ADC/1023) * range*0.95;
 												    		         LCD_displayFloat(CURR,3);
-							     								    _delay_ms(1000);
+												    		         _delay_ms(500);
 															         button2 = Keypad_GetPressedButton();
 														    	  }
 														}
 														        break;
 
-													case 26:
+													case 25:
 											             {
 											                range= 20;
 											                button2 = KEYPAD_INVALID;
@@ -239,15 +342,15 @@ int main(void)
 												  		     while (button2 == KEYPAD_INVALID){
 							    						    	     LCD_displayStringRowColumn(1, 1, "    ");
 							    						    	     OP_ADC = ADC_Read(1);
-															    	 CURR = (OP_ADC/1023) * range;
+															    	 CURR = (OP_ADC/1023) * range*1.185;
 															    	  LCD_displayFloat(CURR,3);
-							     									  _delay_ms(1000);
+															    	  _delay_ms(500);
 															    	    button2 = Keypad_GetPressedButton();
 															    	  }
 											               	}
 															    break;
 
-													 case 11:
+													 case 24:
 														  {
 															  range= 2;
 														   	  button2 = KEYPAD_INVALID;
@@ -256,13 +359,13 @@ int main(void)
 
 														      while (button2 == KEYPAD_INVALID){
 						  								    	    OP_ADC = ADC_Read(1);
-															        CURR = (OP_ADC/1023) * range;
-															    	 _delay_ms(1000);
+															        CURR = (OP_ADC/1023) * range*0.99;
+															        _delay_ms(500);
 
 							     									  if(CURR <= 1)
 																		{
 																		  LCD_displayStringRowColumn(0,4,"CURRENT:");
-																	      LCD_displayStringRowColumn(1,0,"   ");
+																		  LCD_displayStringRowColumn(1, 1, "    ");
 																		  CURR = CURR *1000.0;
 																		  LCD_displayFloat(CURR,3);
 																		  LCD_displayStringRowColumn(1, 14, "uA");
@@ -270,7 +373,7 @@ int main(void)
 																	else
 																		 {
 																		    LCD_displayStringRowColumn(0,4,"CURRENT:");
-																		 	LCD_displayStringRowColumn(1,0,"  ");
+																		    LCD_displayStringRowColumn(1, 1, "    ");
 																		 	LCD_displayFloat(CURR,3);
 																		  	LCD_displayStringRowColumn(1, 14, "mA");
 																		  }
@@ -294,7 +397,7 @@ int main(void)
 
 				        while (button2 == KEYPAD_INVALID){
 							OP_ADC = ADC_Read(2);
-							VOLT = (OP_ADC/1023) * range*0.98;
+							VOLT = (OP_ADC/1023) * range*0.99;
 							float diff = vin-VOLT;
 					        float mul = RS*VOLT;
 							RX = mul /diff ;
@@ -315,100 +418,15 @@ int main(void)
 								LCD_displayString(" ohm");
 							}
 
-						 _delay_ms(1000);
+						    _delay_ms(500);
 						  button2 = Keypad_GetPressedButton();
 			          	 }
 
 
 		        	}
 
-	           else if (Actual_button == 12)
-	           {
-			       LCD_displayStringRowColumn(0,1,"CHOOSE V RANGE");
-			       LCD_displayStringRowColumn(1,1,"2V/20V/200V AC");
-
-			       button = Keypad_GetPressedButton();
-
-			           while (button == KEYPAD_INVALID)
-						{
-			        	   button = Keypad_GetPressedButton();
-						}
-
-							Actual_button = Calculator_GetActualNumber(button);
-							LCD_clearScreen();
-
-			                  switch (Actual_button)
-								    {
-								    case 27:
-								    	{
-								    		range= 200;
-								    		button2 = KEYPAD_INVALID;
-
-
-								    	    LCD_displayStringRowColumn(0, 4, "VOLTAGE:");
-
-								    	     LCD_displayStringRowColumn(1, 14, "mV");
-
-
-									    	    while (button2 == KEYPAD_INVALID){
-									    	    	 LCD_displayStringRowColumn(1, 1, "    ");
-
-											    	    OP_ADC = ADC_Read(2);
-													    VOLT = (OP_ADC/1023) * range*1.002;
-													    LCD_displayFloat(VOLT,3);
-
-													    _delay_ms(1000);
-													    button2 = Keypad_GetPressedButton();
-									    	    }
-
-								    	}
-
-								        break;
-								    case 28:
-								    	{
-								    		range= 2;
-								    		button2 = KEYPAD_INVALID;
-
-								    	     LCD_displayStringRowColumn(0, 4, "VOLTAGE:");
-								    	     LCD_displayStringRowColumn(1, 14, "V");
-
-
-								    	    while (button2 == KEYPAD_INVALID){
-								    	    	 LCD_displayStringRowColumn(1, 1, "    ");
-
-										    	    OP_ADC = ADC_Read(2);
-												    VOLT = (OP_ADC/1023) * range*1.2;
-												    LCD_displayFloat(VOLT,3);
-
-												    _delay_ms(1000);
-												    button2 = Keypad_GetPressedButton();
-								    	    }
-
-								    	}
-								        break;
-								    case 29:
-					                 	{
-					                 		range= 20;
-					                 		button2 = KEYPAD_INVALID;
-
-					                 		LCD_displayStringRowColumn(0, 4, "VOLTAGE:");
-								    	     LCD_displayStringRowColumn(1, 14, "V");
-
-								    	    while (button2 == KEYPAD_INVALID){
-								    	    	 LCD_displayStringRowColumn(1, 1, "    ");
-
-										    	    OP_ADC = ADC_Read(2);
-												    VOLT = (OP_ADC/1023) * range*1.02;
-												    LCD_displayFloat(VOLT,3);
-
-												    _delay_ms(1000);
-												    button2 = Keypad_GetPressedButton();
-								    	    }
-
-					                	}
-								        break;
-							       }
-				 }
+	           else
+	           {}
 
 	}
 
@@ -475,6 +493,11 @@ static uint8 Calculator_GetActualNumber(uint8 button)
    }
     return number;
 }
+
+
+
+
+
 
 
 
